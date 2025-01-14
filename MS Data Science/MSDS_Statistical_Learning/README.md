@@ -77,7 +77,7 @@ The dataset contains information on 777 colleges and universities in the United 
 ---
 
 ## Authors
-- [Priyanka]  
+- [Priyanka Gannavarapu]  
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
