@@ -100,6 +100,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 For any inquiries or suggestions, feel free to reach out:
-- **Name**: Your Name
-- **Email**: your.email@example.com
-- **GitHub**: [yourusername](https://github.com/PriyaG11)
+- **Name**: Priyanka
+- **Email**: gannavarapup.11@gmail.com
+- **GitHub**: [priyaG11](https://github.com/PriyaG11)
