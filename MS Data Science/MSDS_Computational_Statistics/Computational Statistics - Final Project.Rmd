@@ -1,0 +1,138 @@
+---
+title: "Computational Statistics - Final Project"
+author: "Priyanka Gannavarapu"
+date: "2023-12-09"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+Airlines = read.csv("C:\\Users\\slpri\\OneDrive\\Desktop\\Invistico_Airline.csv")
+head(Airlines)
+apply(Airlines, 2, function(row) sum(is.na(row)))
+Airlines = na.omit(Airlines)
+head(unique(Airlines))
+
+Airlines$Gender[Airlines$Gender == "Male"] = 1
+Airlines$Gender[Airlines$Gender == "Female"] = 0
+Airlines$CT[Airlines$CT == "Loyal Customer"] = 1
+Airlines$CT[Airlines$CT == "disloyal Customer"] = 0
+Airlines$TT[Airlines$TT == "Personal Travel"] = 1
+Airlines$TT[Airlines$TT == "Business travel"] = 0
+Airlines$Class[Airlines$Class == "Eco"] = 1
+Airlines$Class[Airlines$Class == "Eco Plus"] = 2
+Airlines$Class[Airlines$Class == "Business"] = 3
+head(Airlines)
+
+#-----
+#The age of Airline customers will be grouped into different age groups to answer the question of which age group would have higher chance of traveling in flights. Thus, we need to pre-process the age of Airline customers into appropriate age group. As the age distribution of the Airline data set is comprised of all adults, the groups we are using are as follows: 1 to 18: Child 19 to 35: Young 36 to 55: Middle age 56 to 70: Old 71 to 90: Older
+
+Airlines$Age_Group = cut(Airlines$Age, 
+                         breaks = c(1, 18, 35, 55, 70, 90),
+                         labels = c("Child", "Young", "Middle age", "Old", "Older"))
+table(Airlines$Age_Group)
+barplot(table(Airlines$Age_Group))
+summary(Airlines)
+#----------
+```
+
+```{r}
+Airlines = Airlines[!is.na(Airlines$Satisfaction), ]
+barplot(table(Airlines$Satisfaction), main = "Distribution of Satisfaction")
+
+library(ggplot2)
+hist(Airlines$Age)
+hist(Airlines$FD)
+hist(Airlines$SC)
+#Similarly, we can plot histogram for all the variables present in the dataset.
+ggplot(Airlines, aes(x = Age_Group, fill = Satisfaction)) +
+  geom_bar(position = "dodge", stat = "Count", color = "black") +
+  labs(x = "Age", y = "Count") +  theme_minimal()
+
+ggplot(Airlines, aes(x = CT, fill = Satisfaction)) +
+  geom_bar(position = "dodge", stat = "count", color = "black") +
+  labs(x = "Customer Type", y = "Count") +
+  theme_minimal()
+
+ggplot(Airlines, aes(x = TT, fill = Satisfaction)) +
+  geom_bar(position = "dodge", stat = "count", color = "black") +
+  labs(x = "Type of Travel", y = "Count") +
+  theme_minimal()
+#Similarly, we can plot the bar graphs for all the other possible combinations with dependent variable (Satisfaction).
+
+numerical_columns = sapply(Airlines, is.numeric)
+numerical_data = Airlines[, numerical_columns]
+correlation = cor(numerical_data)
+correlation
+
+contingency_table1 = table(Airlines$Satisfaction, Airlines$CT)
+chi_square1 = chisq.test(contingency_table1)
+chi_square1
+
+contingency_table2 = table(Airlines$Satisfaction, Airlines$TT)
+chi_square2 = chisq.test(contingency_table2)
+chi_square2
+
+contingency_table3 = table(Airlines$Satisfaction, Airlines$Class)
+chi_square3 = chisq.test(contingency_table3)
+chi_square3
+
+#----- linear model
+
+Airlines$Satisfaction = as.factor(Airlines$Satisfaction)
+str(Airlines)
+
+library(caret)
+index=sample(2,nrow(Airlines),replace = TRUE,prob = c(.80,.20))
+train_set = Airlines[index==1,]
+test_set = Airlines[index==2,]
+head(train_set)
+head(test_set)
+
+library(ROCR)
+library(caTools)
+log_reg = glm(Satisfaction~., data = train_set, family = "binomial")
+summary(log_reg)
+plot(log_reg,col = "yellow")
+predict_reg = predict(log_reg,newdata=test_set, type = "response")
+predict_reg = ifelse(predict_reg > 0.5,"satisfied","dissatisfied")
+predict_reg = factor(predict_reg, levels = levels(test_set$Satisfaction))
+head(predict_reg)
+levels(test_set$Satisfaction)
+levels(predict_reg)
+str(predict_reg)
+
+table(predict_reg)
+table(predict_reg,test_set$Satisfaction)
+
+Accuracy = confusionMatrix(test_set$Satisfaction,predict_reg)
+Accuracy
+# The accuracy is 83.4%
+precision = Accuracy$byClass["Pos Pred Value"]
+precision
+
+predict_reg <- predict(log_reg, newdata = test_set, type = "response")
+pred <- prediction(predict_reg, test_set$Satisfaction)
+roc.perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+plot(roc.perf, main = "ROC Curve", col = "blue")
+abline(a = 0, b = 1, col = "red")
+roc.at.05 <- performance(pred, "tpr", "fpr")@y.values[[1]][which(roc.perf@x.values[[1]] == 0.5)]
+points(0.5, roc.at.05, col = "black", pch = 19, cex = 1.5)
+
+auc.perf = performance(pred, measure = "auc")
+auc.perf@y.values
+
+rec.perf = performance(pred, measure = "rec")
+plot(rec.perf)
+
+prec.perf = performance(pred, measure = "prec")
+plot(prec.perf)
+```
+
+```{r}
+
+```
+

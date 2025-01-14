@@ -1,0 +1,199 @@
+---
+title: "Final Project"
+author: "Priyanka Gannavarapu"
+date: "2023-12-05"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#1
+```{r}
+library(alr4)
+library(dplyr)
+library(caret)
+
+data("Downer")
+Downer
+df = Downer[ c("calving", "daysrec", "ck", "ast", "urea", "pcv")]
+data_frame = na.omit(df)
+data_frame
+
+index=sample(2,nrow(data_frame),replace = TRUE,prob = c(.80,.20))
+train_set=data_frame[index==1,]
+test_set=data_frame[index==2,]
+head(train_set)
+head(test_set)
+
+model = lm(calving ~ daysrec + ck + ast + urea + pcv, data = train_set, family = "binomial")
+model
+
+predictions = ifelse(predict(model, newdata = test_set, type = "response") > 0.5, 1, 0)
+predictions
+predictions = factor(predictions, levels = levels(test_set$calving))
+
+conf_matrix = confusionMatrix(predictions, test_set$calving)
+conf_matrix
+levels(test_set$calving)
+levels(predictions)
+```
+
+#3
+```{r}
+# (a) Load the faithful data set in R.
+data(faithful)
+
+# (b) Implement polynomial regression models with degrees from 1 to 4.
+degrees <- 1:4
+r2_values <- numeric(length(degrees))
+
+for (degree in degrees) {
+  # Fit polynomial regression model
+  model_formula <- as.formula(paste("eruptions ~ poly(waiting, degree, raw = TRUE)"))
+  model <- lm(model_formula, data = faithful)
+  
+  # (c) Use 10-fold cross-validation to compute R2 values for each model.
+  library(boot)
+  set.seed(123)  # for reproducibility
+  cv_result <- cv.glm(data = faithful, glmfit = model, K = 10)$delta[1]
+  
+  # Store the cross-validated R2 value
+  r2_values[degree] <- cv_result
+}
+r2_values
+# (d) Identify the degree that corresponds to the highest average cross-validated R2 value.
+best_degree <- which.max(r2_values)
+best_degree
+best_r2_value <- r2_values[best_degree]
+best_r2_value
+```
+
+
+#2
+```{r}
+#2a
+# Load the MASS package
+library(MASS)
+
+# Load the Boston dataset
+data(Boston)
+
+# Display the first few rows of the dataset
+head(Boston)
+
+
+
+
+#2b
+# Load the required library
+library(glmnet)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Define the predictor variables (exclude 'medv')
+predictors <- colnames(Boston)[colnames(Boston) != "medv"]
+
+# Standardize the predictors
+x <- scale(as.matrix(Boston[, predictors]))
+y <- Boston$medv
+
+# Create a Lasso regression model using cross-validation
+lasso_model <- cv.glmnet(x, y, alpha = 1)
+
+# Plot the cross-validation results
+plot(lasso_model)
+
+# Find the optimal value of lambda
+optimal_lambda <- lasso_model$lambda.min
+cat("optimal lambda:", optimal_lambda, "\n")
+
+# Display coefficients of the final model
+final_model <- glmnet(x, y, alpha = 1, lambda = optimal_lambda)
+coef(final_model)
+
+
+
+
+#2c
+# Extract coefficients from the Lasso model
+lasso_coefficients <- coef(final_model)
+
+# Identify features with non-zero coefficients
+selected_features <- rownames(lasso_coefficients)[lasso_coefficients[, 1] != 0]
+
+# Display selected features
+cat("Selected features with non-zero coefficients:\n")
+cat(selected_features, "\n")
+
+
+
+#2d
+# Make predictions on the entire dataset
+predictions <- predict(final_model, newx = x, s = optimal_lambda)
+
+# Calculate Mean Squared Error (MSE) on the training set
+mse <- mean((predictions - y)^2)
+cat("Mean Squared Error on the training set:", mse, "\n")
+
+# Assess the selected features' importance
+# Extract the coefficients corresponding to the optimal lambda
+selected_coefficients <- coef(final_model, s = optimal_lambda)
+
+# Display the selected features and their coefficients
+selected_features <- rownames(selected_coefficients)[selected_coefficients[, 1] != 0]
+cat("Selected features and their coefficients:\n")
+for (feature in selected_features) {
+  cat(feature, ": ", as.numeric(selected_coefficients[feature, 1]), "\n")
+}
+```
+
+```{r}
+# (a) Loading the Dataset
+library(MASS)
+data(Boston)
+df <- Boston
+
+# (b) Lasso Regression Modeling
+library(glmnet)
+
+# Separate predictors and response variable
+X <- as.matrix(df[, -14])  # Exclude the response variable 'medv'
+y <- df$medv
+
+# Use cv.glmnet to find optimal lambda via cross-validation
+lasso_model <- cv.glmnet(x = X, y = y, alpha = 1)  # alpha = 1 for Lasso regression
+
+# Plot the cross-validated error as a function of log(lambda)
+plot(lasso_model)
+
+# (c) Variable Selection
+# Extract coefficients from the Lasso model
+lasso_coef <- coef(lasso_model, s = lasso_model$lambda.min)
+
+# Identify features with non-zero coefficients
+selected_features <- rownames(lasso_coef)[lasso_coef[, 1] != 0]
+
+# (d) Evaluation
+# Evaluate performance using Mean Squared Error (MSE)
+mse <- min(lasso_model$cvm)
+
+# Assess the importance of selected features
+feature_importance <- lasso_coef[rownames(lasso_coef) %in% selected_features, ]
+feature_importance
+# (e) Interpretation
+# Print results
+cat("Selected Features with Non-Zero Coefficients:\n")
+print(selected_features)
+
+cat("\nMinimum Cross-Validated Mean Squared Error (MSE):\n")
+print(mse)
+
+cat("\nCoefficients of Selected Features:\n")
+print(feature_importance)
+
+```
+
+
+

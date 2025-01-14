@@ -1,0 +1,2 @@
+# Consumer Perspective Towards Eco-Friendly Products
+This project utilized statistical tools, including SPSS and chi-square tests, to assess consumer attitudes toward eco-friendly products among 150 respondents.
