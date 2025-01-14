@@ -1,10 +1,9 @@
-# Consumer Perspective Towards Eco-Friendly Products
-This project utilized statistical tools, including SPSS and chi-square tests, to assess consumer attitudes toward eco-friendly products among 150 respondents.
+
 
 # A Survey on Consumer Perspective Towards Environmental Friendly Products
 
 ## Project Overview
-This project explores consumer perceptions, behaviors, and awareness regarding environmental-friendly products. Conducted by a team of undergraduate students, it highlights the trends, motivations, and challenges in adopting sustainable consumption practices.
+This project explores consumer perceptions, behaviors, and awareness regarding environmental-friendly products. Conducted by a team of undergraduate students, it highlights the trends, motivations, and challenges in adopting sustainable consumption practices.This project utilized statistical tools, including SPSS and chi-square tests, to assess consumer attitudes toward eco-friendly products among 150 respondents.
 
 ---
 
