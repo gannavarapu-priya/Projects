@@ -102,4 +102,4 @@ This project is licensed under the [MIT License](LICENSE).
 For any inquiries or suggestions, feel free to reach out:
 - **Name**: Priyanka
 - **Email**: gannavarapup.11@gmail.com
-- **GitHub**: [priyaG11](https://github.com/PriyaG11)
+- **GitHub**: [gannavarapu-priya](https://github.com/gannavarapu-priya)
