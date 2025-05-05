@@ -1,6 +1,6 @@
 # 🛠️ Data Science & Analytics Portfolio
 
-Welcome to my project portfolio! I’m Priya Gannavarapu, a data science graduate with strong expertise in machine learning, deep learning, statistical modeling, big data analytics, and web development. This repository showcases a wide range of projects completed during my academic journey, highlighting my ability to solve real-world problems across industries.
+Welcome to my project portfolio! I’m Priyanka Gannavarapu, a data science graduate with strong expertise in machine learning, deep learning, statistical modeling, big data analytics, and web development. This repository showcases a wide range of projects completed during my academic journey, highlighting my ability to solve real-world problems across industries.
 
 ## 📂 Projects
 
