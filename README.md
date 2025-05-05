@@ -60,7 +60,7 @@ I’m passionate about turning data into actionable insights and developing scal
 
 ## 📫 Let’s Connect!
 
-- [LinkedIn](https://www.linkedin.com/in/gannavarapu-priya/)  
+- [LinkedIn](https://www.linkedin.com/in/priyanka-gannavarapu)  
 - [Email](gannavarapup.11@gmail.com)
 
 
