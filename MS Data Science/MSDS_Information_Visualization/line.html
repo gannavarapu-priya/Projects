@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Line Chart</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #27ae60;
+      margin: 0;
+    }
+    select {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      background: #fff;
+      color: #333;
+      transition: box-shadow 0.3s;
+    }
+    select:hover {
+      box-shadow: 0 0 10px rgba(39, 174, 96, 0.3);
+    }
+    .page-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+    }
+    .chart-container, .info-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .chart-container:hover, .info-box:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+    canvas {
+      width: 100% !important;
+      height: 400px !important;
+    }
+    .info-box h2 {
+      margin-top: 0;
+      color: #27ae60;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+    .info-box p {
+      color: #555;
+      line-height: 1.5;
+    }
+    a.back-link {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      color: #27ae60;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    a.back-link:hover {
+      color: #1e8449;
+    }
+    @media (max-width: 800px) {
+      .page-grid {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📈 Line Chart (MPG over Year)</h1>
+    <label>
+      <strong>Filter by Origin:</strong>
+      <select id="originFilter">
+        <option value="All">All</option>
+        <option value="American">American</option>
+        <option value="Japanese">Japanese</option>
+        <option value="European">European</option>
+      </select>
+    </label>
+  </header>
+
+  <div class="page-grid">
+    <div class="chart-container">
+      <canvas id="lineChart"></canvas>
+    </div>
+    <div class="info-box">
+      <h2>Analyze Fuel Efficiency Trends Over Time</h2>
+      
+        <p>
+          This shows how fuel efficiency improved across all regions, likely due to changing regulations, technology advances, and market demands.
+          We used this line chart because it clearly shows how average MPG changes over the years, revealing fuel efficiency trends and highlighting shifts over time.
+        </p>
+      
+        <p><strong>Key Insights:</strong></p>
+        <ul>
+          <li><strong>All cars →</strong> Clear trend of rising fuel efficiency over time, especially after 1975.</li>
+          <li><strong>American cars →</strong> Lower MPG early on, strong improvements after mid-1970s.</li>
+          <li><strong>Japanese cars →</strong> Steady MPG growth, consistently high efficiency.</li>
+          <li><strong>European cars →</strong> Gradual MPG increase, sharp rise near 1980.</li>
+        </ul>
+      
+      
+    </div>
+  </div>
+
+  <a class="back-link" href="index.html">← Back to Home</a>
+
+  <script>
+    let globalData = [];
+    let filteredData = [];
+    let lineChart;
+
+    Papa.parse("data/cars.csv", {
+      download: true,
+      header: true,
+      dynamicTyping: true,
+      complete: function(results) {
+        globalData = results.data.filter(d => d.MPG && d.Horsepower && d.Weight && d.Cylinders);
+        filteredData = [...globalData];
+        renderLine();
+      }
+    });
+
+    document.getElementById('originFilter').addEventListener('change', e => {
+      const val = e.target.value;
+      filteredData = val === 'All' ? [...globalData] : globalData.filter(d => d.Origin === val);
+      renderLine();
+    });
+
+    function renderLine() {
+      const years = [...new Set(filteredData.map(d => d["Model Year"]))].sort((a, b) => a - b);
+      const avgMPG = years.map(y => {
+        const subset = filteredData.filter(d => d["Model Year"] === y);
+        return subset.reduce((sum, d) => sum + d.MPG, 0) / (subset.length || 1);
+      });
+
+      const data = {
+        labels: years,
+        datasets: [{
+          label: 'Average MPG',
+          data: avgMPG,
+          borderColor: '#27ae60',
+          backgroundColor: 'rgba(39, 174, 96, 0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      };
+
+      const options = {
+  responsive: true,
+  plugins: {
+    zoom: {
+      zoom: { wheel: { enabled: true }, mode: 'x' },
+      pan: { enabled: true, mode: 'x' }
+    }
+  },
+  scales: {
+    x: {
+      title: { display: true, text: 'Model Year' },
+      grid: { display: false }
+    },
+    y: {
+      title: { display: true, text: 'Average MPG' },
+      grid: { display: false }
+    }
+  },
+  onClick: (evt, item) => {
+    if (item.length) {
+      const year = years[item[0].index];
+      filteredData = filteredData.filter(d => d["Model Year"] === year);
+      renderLine();
+    }
+  }
+};
+
+
+      if (lineChart) lineChart.destroy();
+      const ctx = document.getElementById('lineChart').getContext('2d');
+      lineChart = new Chart(ctx, { type: 'line', data, options });
+    }
+  </script>
+  <footer style="text-align: center; padding: 20px; margin-top: 40px; background: #2eae63; color: #fff; font-size: 0.9rem; border-radius: 12px;">
+    <strong>Team FLASHES</strong>
+ </footer>
+</body>
+</html>

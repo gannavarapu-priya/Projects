@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Information Visualization – Programming with D3.js</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(270deg, #ff6b6b, #f7b733, #23d5ab, #1a2a6c, #b21f1f, #fdbb2d);
+      background-size: 1200% 1200%;
+      animation: gradientBG 20s ease infinite;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 50% 100%; }
+      50% { background-position: 100% 50%; }
+      75% { background-position: 50% 0%; }
+      100% { background-position: 0% 50%; }
+    }
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      color: #ffffff;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+    }
+    .subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      color: #f0f0f0;
+      letter-spacing: 1px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 120px;
+      margin: 15px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .button:hover {
+      transform: translateY(-10px) rotate(10deg);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+    }
+    .button-label {
+      font-size: 0.7rem;
+      margin-top: 8px;
+    }
+    .buttons-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    footer {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #ddd;
+    }
+    footer p {
+      margin: 6px 0;
+    }
+    footer strong {
+      color: #00ffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1> 📊  Information Visualization</h1>
+    <div class="subtitle">Programming with D3.js</div>
+
+    <div class="buttons-grid">
+      <a class="button" href="Dashboard.html" title="Graphs">
+        🌐
+        <div class="button-label">Dashboard</div>
+      </a>
+      <a class="button" href="parallel.html" title="Parallel Coordinates">
+        🔗
+        <div class="button-label">Parallel</div>
+      </a>
+      <a class="button" href="line.html" title="Line Chart">
+        📈
+        <div class="button-label">Line</div>
+      </a>
+      <a class="button" href="scatter.html" title="Scatter Plot">
+        ⚙️
+        <div class="button-label">Scatter</div>
+      </a>
+      <a class="button" href="bar.html" title="Bar Chart">
+        🏭
+        <div class="button-label">Bar</div>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <p><strong>Team Members</strong></p>
+    <p>Sai Laxmi Priyanka Gannavarapu - sgannava@kent.edu</p>
+    <p>Swetha Yanamandhalla - syanaman@kent.edu</p>
+    <p>Ajaychary Kandukuri - akanduk1@kent.edu</p>
+    <p>Akhil Pathi - apathi1@kent.edu</p>
+  </footer>
+
+</body>
+</html>

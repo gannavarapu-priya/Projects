@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Parallel Coordinates</title>
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #3498db;
+      margin: 0;
+    }
+    select {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      background: #fff;
+      color: #333;
+      transition: box-shadow 0.3s;
+    }
+    select:hover {
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+    }
+    .page-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+    }
+    .chart-container, .info-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .chart-container:hover, .info-box:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+    #parallelChart {
+      width: 100%;
+      height: 400px;
+    }
+    .info-box h2 {
+      margin-top: 0;
+      color: #3498db;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+    .info-box p {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .info-box ul {
+      padding-left: 20px;
+      margin-top: 0;
+    }
+    .info-box li {
+      margin-bottom: 8px;
+    }
+    a.back-link {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      color: #3498db;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    a.back-link:hover {
+      color: #21618c;
+    }
+    @media (max-width: 800px) {
+      .page-grid {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔗 Parallel Coordinates</h1>
+    <label>
+      <strong>Filter by Origin:</strong>
+      <select id="originFilter">
+        <option value="All">All</option>
+        <option value="American">American</option>
+        <option value="Japanese">Japanese</option>
+        <option value="European">European</option>
+      </select>
+    </label>
+  </header>
+
+  <div class="page-grid">
+    <div class="chart-container">
+      <div id="parallelChart"></div>
+    </div>
+    <div class="info-box">
+      <h2>Cluster Vehicles by Performance and Design Attributes</h2>
+      
+        <p>
+          This plot shows how car attributes (<strong>MPG</strong>, <strong>horsepower</strong>, <strong>weight</strong>, <strong>cylinders</strong>) vary across different cars.
+          Each line represents a car, connecting its values across all attributes.
+        </p>
+      
+        <p><strong>Key Insights:</strong></p>
+        <ul>
+          <li><strong>High MPG cars →</strong> lighter, lower horsepower.</li>
+          <li><strong>Heavy cars →</strong> more cylinders, lower MPG.</li>
+        </ul>
+      
+        <p><strong>Origin Filter reveals:</strong></p>
+        <ul>
+          <li><strong>Japanese →</strong> light, efficient, mostly 4-cylinder.</li>
+          <li><strong>American →</strong> heavy, powerful, 6–8 cylinders.</li>
+          <li><strong>European →</strong> balanced mix of performance and efficiency.</li>
+        </ul>
+      
+        <p>
+          This visualization helps compare design trade-offs across regions, showing how manufacturers prioritize weight, power, and fuel efficiency.
+        </p>
+      
+    </div>
+  </div>
+
+  <a class="back-link" href="index.html">← Back to Home</a>
+
+  <script>
+    let globalData = [];
+    let filteredData = [];
+
+    Papa.parse("data/cars.csv", {
+      download: true,
+      header: true,
+      dynamicTyping: true,
+      complete: function(results) {
+        globalData = results.data.filter(d => d.MPG && d.Horsepower && d.Weight && d.Cylinders);
+        filteredData = [...globalData];
+        renderParallel();
+      }
+    });
+
+    document.getElementById('originFilter').addEventListener('change', e => {
+      const val = e.target.value;
+      filteredData = val === 'All' ? [...globalData] : globalData.filter(d => d.Origin === val);
+      renderParallel();
+    });
+
+    function renderParallel() {
+      const dims = ['MPG', 'Horsepower', 'Weight', 'Cylinders'].map(dim => ({
+        label: dim,
+        values: filteredData.map(d => d[dim]),
+        range: [Math.min(...filteredData.map(d => d[dim])), Math.max(...filteredData.map(d => d[dim]))]
+      }));
+
+      Plotly.newPlot('parallelChart', [{
+        type: 'parcoords',
+        line: { color: filteredData.map(d => d.MPG), colorscale: 'Jet' },
+        dimensions: dims
+      }]);
+
+      document.getElementById('parallelChart').on('plotly_selected', event => {
+        if (event) {
+          const indices = event.points.map(p => p.pointNumber);
+          filteredData = indices.map(i => filteredData[i]);
+          renderParallel();
+        }
+      });
+    }
+  </script>
+  <footer style="text-align: center; padding: 20px; margin-top: 40px; background: #3498db; color: #fff; font-size: 0.9rem; border-radius: 12px;">
+     <strong>Team FLASHES</strong>
+  </footer>
+  
+</body>
+</html>
