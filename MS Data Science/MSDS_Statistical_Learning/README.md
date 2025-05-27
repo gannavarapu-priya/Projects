@@ -58,7 +58,7 @@ The dataset contains information on 777 colleges and universities in the United 
 ## How to Run the Code
 1. Clone the repository.
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/gannavarapu-priya/Projects.git
    ```
 2. Open the R script in an R environment (e.g., RStudio).
 3. Install required packages.
