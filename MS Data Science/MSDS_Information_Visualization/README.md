@@ -62,3 +62,24 @@ The dataset includes multiple car attributes such as mileage, horsepower, cylind
 1. Clone the repository.
    ```bash
    git clone https://github.com/gannavarapu-priya/Projects.git
+
+2. Navigate to the folder:
+   ```bash
+   cd "Projects/MS Data Science/MSDS_Information_Visualization"
+
+3. Open index.html in your browser to view the dashboard.
+
+---
+
+## Future Enhancements
+- Add dropdown filters and tool panels.
+- Include summary statistics and export options.
+- Add support for uploading custom datasets.
+
+---
+
+## Authors
+- [Priyanka Gannavarapu]  
+
+## License
+This project is licensed under the [MIT License](LICENSE).
